@@ -1,0 +1,105 @@
+"""Main module for TokenLens library."""
+
+from typing import Dict, Any, List, Optional, Union
+from .providers.provider_factory import ProviderFactory
+from .tokenizers.factory import TokenizerFactory
+from .config_loader import ConfigLoader
+
+class ModelProcessor:
+    """Main class for managing token limits across various AI providers."""
+    
+    SUPPORTED_PROVIDERS = {
+        'openai': ['text', 'image', 'voice', 'video'],  # GPT-4, DALL-E 3, Whisper, TTS, Sora
+        'anthropic': ['text'],  # Claude models
+        'google': ['text', 'image', 'video'],  # Gemini, Imagen
+        'meta': ['text', 'image'],  # Llama, ImageBind
+        'adobe': ['image'],  # Firefly
+        'stability': ['image', 'video'],  # Stable Diffusion
+        'midjourney': ['image'],  # Midjourney API
+        'haygen': ['avatar', 'video'],  # Avatar and video generation
+        'cohere': ['text', 'embedding'],  # Text and embedding models
+        'mistral': ['text'],  # Mistral models
+        'perplexity': ['text'],  # Perplexity models
+        'replicate': ['text', 'image', 'video'],  # Various models
+        'amazon': ['text', 'image'],  # Bedrock models
+        'deepmind': ['text', 'image'],  # Gemma, Imagen
+        'inflection': ['text'],  # Inflection-X models
+        'nvidia': ['text', 'image'],  # NeMo models
+    }
+    
+    def __init__(self, config_dir: str = None):
+        """Initialize TokenLens.
+        
+        Args:
+            config_dir: Optional path to config directory.
+        """
+        self.config = ConfigLoader(config_dir)
+        
+    def check_limits(self, provider: str, content: Union[str, Dict[str, Any]], 
+                    model: str = None, feature: str = None) -> Dict[str, Any]:
+        """Check limits for any provider and content type.
+        
+        Args:
+            provider: Provider name (e.g., 'openai', 'anthropic')
+            content: Content to check. Can be text string or dict for structured content
+            model: Model name (e.g., 'gpt-4', 'dall-e-3')
+            feature: Optional feature type ('text', 'image', 'video', 'avatar', 'voice')
+            
+        Returns:
+            Dictionary containing limit check results
+        """
+        if provider not in self.SUPPORTED_PROVIDERS:
+            raise ValueError(f"Unsupported provider: {provider}. Supported providers: {list(self.SUPPORTED_PROVIDERS.keys())}")
+            
+        provider_instance = ProviderFactory.get_provider(provider)
+        
+        # Auto-detect feature if not provided
+        if not feature:
+            if isinstance(content, str):
+                feature = 'text'
+            elif isinstance(content, dict):
+                feature = self._detect_feature_from_content(content)
+        
+        # Validate feature support
+        if feature not in self.SUPPORTED_PROVIDERS[provider]:
+            raise ValueError(f"Provider {provider} does not support feature: {feature}")
+                
+        # Get appropriate model if not specified
+        if not model:
+            models = self.config.get_models_by_feature(provider, feature)
+            if models:
+                model = models[0]  # Use first available model
+            else:
+                raise ValueError(f"No models found for provider {provider} with feature {feature}")
+                
+        # Check limits based on feature type
+        if feature == 'text':
+            result = provider_instance.check_text_limits(model, content)
+        elif feature == 'image':
+            result = provider_instance.check_image_limits(model, content)
+        elif feature == 'video':
+            result = provider_instance.check_video_limits(model, content)
+        elif feature == 'avatar':
+            result = provider_instance.check_avatar_limits(model, content)
+        elif feature == 'voice':
+            result = provider_instance.check_voice_limits(model, content)
+        else:
+            raise ValueError(f"Unsupported feature type: {feature}")
+            
+        return result
+    
+    def _detect_feature_from_content(self, content: Dict[str, Any]) -> str:
+        """Detect feature type from content structure."""
+        if 'script' in content and 'avatar' in content:
+            return 'avatar'
+        elif 'prompt' in content and ('width' in content or 'height' in content):
+            return 'image'
+        elif 'script' in content and 'duration' in content:
+            return 'video'
+        elif 'text' in content and 'voice_id' in content:
+            return 'voice'
+        return 'text'  # Default to text if unclear
+        
+    def get_provider_features(self, provider: str) -> List[str]:
+        """Get supported features for a provider."""
+        return self.SUPPORTED_PROVIDERS.get(provider, [])

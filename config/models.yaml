@@ -1,0 +1,338 @@
+providers:
+  # Text Generation Models
+  openai:
+    models:
+      gpt-4:
+        token_limit: 8192
+        max_response_tokens: 4096
+      gpt-4-32k:
+        token_limit: 32768
+        max_response_tokens: 8192
+      gpt-3.5-turbo:
+        token_limit: 4096
+        max_response_tokens: 2048
+      speechgen:
+        max_duration: "300"
+        supported_formats: ["mp3", "wav"]
+    supported_features: ["text", "voice"]
+    
+  anthropic:
+    models:
+      claude-2:
+        token_limit: 100000
+        max_response_tokens: 25000
+      claude-instant:
+        token_limit: 100000
+        max_response_tokens: 25000
+      claude-3-5-sonnet:
+        token_limit: 200000
+        max_response_tokens: 100000
+    supported_features: ["text"]
+    
+  mistral:
+    models:
+      mistral-tiny:
+        token_limit: 4096
+        max_response_tokens: 1024
+      mistral-small:
+        token_limit: 8192
+        max_response_tokens: 2048
+      mistral-medium:
+        token_limit: 32768
+        max_response_tokens: 8192
+      mistral-7b:
+        token_limit: 8192
+        max_response_tokens: 4096
+    supported_features: ["text"]
+    
+  cohere:
+    models:
+      command:
+        token_limit: 4096
+        max_response_tokens: 2048
+      command-light:
+        token_limit: 4096
+        max_response_tokens: 2048
+      command-nightly:
+        token_limit: 8192
+        max_response_tokens: 4096
+    supported_features: ["text", "embedding"]
+    
+  ai21:
+    models:
+      j2-ultra:
+        token_limit: 8192
+        max_response_tokens: 2048
+      j2-mid:
+        token_limit: 8192
+        max_response_tokens: 2048
+    supported_features: ["text"]
+    
+  meta:
+    models:
+      llama2-7b:
+        token_limit: 4096
+        max_response_tokens: 2048
+      llama2-70b:
+        token_limit: 4096
+        max_response_tokens: 2048
+      llama-3-1:
+        token_limit: 16384
+        max_response_tokens: 8192
+    supported_features: ["text"]
+    
+  google:
+    models:
+      gemini-pro:
+        token_limit: 32768
+        max_response_tokens: 8192
+      palm2:
+        token_limit: 8192
+        max_response_tokens: 2048
+      gemini:
+        token_limit: 32768
+        max_response_tokens: 16384
+    supported_features: ["text", "image"]
+    
+  qwen:
+    models:
+      qwen-base:
+        token_limit: 8192
+        max_response_tokens: 4096
+    supported_features: ["text"]
+    
+  stanford:
+    models:
+      alpaca:
+        token_limit: 2048
+        max_response_tokens: 1024
+    supported_features: ["text"]
+    
+  huggingface:
+    models:
+      bloom:
+        token_limit: 2048
+        max_response_tokens: 1024
+    supported_features: ["text"]
+    
+  deepmind:
+    models:
+      flamingo:
+        token_limit: 4096
+        max_response_tokens: 2048
+    supported_features: ["text"]
+    
+  # Image Generation Models
+  stability:
+    models:
+      stable-diffusion-xl:
+        max_resolution: "1024x1024"
+        supported_formats: ["png", "jpeg"]
+        max_batch_size: 4
+    supported_features: ["image"]
+    
+  midjourney:
+    models:
+      v6:
+        max_resolution: "2048x2048"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["image"]
+    
+  ideogram:
+    models:
+      v2:
+        max_resolution: "1024x1024"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["image"]
+    
+  runway:
+    models:
+      frames:
+        max_resolution: "1024x1024"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["image"]
+    
+  adobe:
+    models:
+      firefly:
+        max_resolution: "2048x2048"
+        supported_formats: ["png", "jpeg", "psd"]
+    supported_features: ["image"]
+    
+  google:
+    models:
+      imagen-3:
+        max_resolution: "2048x2048"
+        supported_formats: ["png", "jpeg", "webp"]
+    supported_features: ["image"]
+    
+  openai:
+    models:
+      dall-e-3:
+        max_resolution: "1024x1024"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["image"]
+    
+  # Video and Avatar Generation
+  haygen:
+    models:
+      haygen-avatar-v1:
+        max_script_chars: 2000
+        max_duration: 300
+        supported_resolutions: ["720p", "1080p", "4k"]
+      haygen-video-v1:
+        max_script_chars: 5000
+        max_duration: 300
+        max_resolution: "4k"
+      haygen-voice-v1:
+        max_script_chars: 3000
+        max_duration: 300
+    supported_features: ["avatar", "video", "voice"]
+    
+  synthesia:
+    models:
+      v2:
+        max_resolution: "1920x1080"
+        max_duration: 300
+        supported_formats: ["mp4"]
+    supported_features: ["avatar"]
+    
+  d-id:
+    models:
+      v3:
+        max_resolution: "1920x1080"
+        max_duration: 300
+        supported_formats: ["mp4"]
+    supported_features: ["avatar"]
+    
+  replika:
+    models:
+      v2:
+        max_resolution: "1280x720"
+        max_duration: 300
+        supported_formats: ["mp4"]
+    supported_features: ["avatar"]
+    
+  nightcafe:
+    models:
+      creator:
+        max_resolution: "1920x1080"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["avatar"]
+    
+  openart:
+    models:
+      v2:
+        max_resolution: "2048x2048"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["avatar"]
+    
+  microsoft:
+    models:
+      designer:
+        max_resolution: "2048x2048"
+        supported_formats: ["png", "jpeg", "psd"]
+    supported_features: ["avatar"]
+    
+  realm:
+    models:
+      ai:
+        max_resolution: "1920x1080"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["avatar"]
+    
+  starrytars:
+    models:
+      v1:
+        max_resolution: "1920x1080"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["avatar"]
+    
+  # Video Generation
+  openai:
+    models:
+      sora:
+        max_resolution: "1920x1080"
+        max_duration: "60"
+        supported_formats: ["mp4"]
+    supported_features: ["video"]
+    
+  runway:
+    models:
+      gen-2:
+        max_resolution: "1920x1080"
+        max_duration: "30"
+        supported_formats: ["mp4"]
+    supported_features: ["video"]
+    
+  google:
+    models:
+      dream-machine:
+        max_resolution: "1920x1080"
+        max_duration: "30"
+        supported_formats: ["mp4", "webm"]
+    supported_features: ["video"]
+    
+  meta:
+    models:
+      allegro:
+        max_resolution: "1280x720"
+        max_duration: "30"
+        supported_formats: ["mp4"]
+    supported_features: ["video"]
+    
+  google:
+    models:
+      videopoet:
+        max_resolution: "1920x1080"
+        max_duration: "30"
+        supported_formats: ["mp4"]
+    supported_features: ["video"]
+    
+  microsoft:
+    models:
+      direct2v:
+        max_resolution: "1920x1080"
+        max_duration: "30"
+        supported_formats: ["mp4"]
+    supported_features: ["video"]
+    
+  # Voice Generation
+  openai:
+    models:
+      speechgen:
+        max_duration: "300"
+        supported_formats: ["mp3", "wav"]
+    supported_features: ["voice"]
+    
+  meta:
+    models:
+      voicebox:
+        max_duration: "300"
+        supported_formats: ["mp3", "wav"]
+    supported_features: ["voice"]
+    
+  google:
+    models:
+      funaudiollm:
+        max_duration: "300"
+        supported_formats: ["mp3", "wav", "ogg"]
+    supported_features: ["voice"]
+    
+  fugatto:
+    models:
+      v1:
+        max_duration: "300"
+        supported_formats: ["mp3", "wav"]
+    supported_features: ["voice"]
+    
+  # Amazon's Models
+  amazon:
+    models:
+      titan-text-express:
+        token_limit: 8192
+        max_response_tokens: 2048
+      titan-image-generator:
+        max_resolution: "1024x1024"
+        supported_formats: ["png", "jpeg"]
+    supported_features: ["text", "image"]

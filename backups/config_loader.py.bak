@@ -1,0 +1,157 @@
+import os
+import yaml
+from typing import Dict, Any, List, Optional
+
+class ConfigLoader:
+    """Configuration loader for TokenLens.
+    
+    This class handles loading and managing configuration for all providers
+    and their models, including text, image, video, avatar, and voice generation
+    capabilities.
+    """
+    
+    # Default model configurations for major providers
+    DEFAULT_CONFIGS = {
+        'openai': {
+            'text_models': {
+                'gpt-4': {'token_limit': 8192, 'max_output_tokens': 2048},
+                'gpt-4-turbo': {'token_limit': 128000, 'max_output_tokens': 4096},
+                'gpt-3.5-turbo': {'token_limit': 4096, 'max_output_tokens': 1024}
+            },
+            'image_models': {
+                'dall-e-3': {'max_resolution': '1024x1024', 'formats': ['png', 'jpeg']},
+                'dall-e-2': {'max_resolution': '512x512', 'formats': ['png']}
+            },
+            'video_models': {
+                'sora-1': {'max_duration': 60, 'max_resolution': '1920x1080'}
+            },
+            'voice_models': {
+                'tts-1': {'max_chars': 4096, 'voices': ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']}
+            }
+        },
+        'anthropic': {
+            'text_models': {
+                'claude-3-opus': {'token_limit': 200000, 'max_output_tokens': 4096},
+                'claude-3-sonnet': {'token_limit': 150000, 'max_output_tokens': 4096},
+                'claude-2.1': {'token_limit': 100000, 'max_output_tokens': 4096}
+            }
+        },
+        'google': {
+            'text_models': {
+                'gemini-pro': {'token_limit': 32000, 'max_output_tokens': 2048},
+                'gemini-ultra': {'token_limit': 128000, 'max_output_tokens': 4096}
+            },
+            'image_models': {
+                'imagen-2': {'max_resolution': '1024x1024', 'formats': ['png', 'jpeg']}
+            }
+        },
+        'meta': {
+            'text_models': {
+                'llama-2-70b': {'token_limit': 4096, 'max_output_tokens': 1024},
+                'llama-2-13b': {'token_limit': 4096, 'max_output_tokens': 1024}
+            }
+        },
+        'stability': {
+            'image_models': {
+                'stable-diffusion-xl': {'max_resolution': '1024x1024', 'formats': ['png', 'jpeg']},
+                'stable-diffusion-3': {'max_resolution': '2048x2048', 'formats': ['png', 'jpeg']}
+            }
+        },
+        'haygen': {
+            'avatar_models': {
+                'haygen-avatar-v1': {
+                    'max_script_chars': 2000,
+                    'max_duration': 300,
+                    'supported_resolutions': ['720p', '1080p', '4k']
+                }
+            }
+        },
+        'cohere': {
+            'text_models': {
+                'command': {'token_limit': 4096, 'max_output_tokens': 1024},
+                'command-light': {'token_limit': 4096, 'max_output_tokens': 1024}
+            }
+        },
+        'mistral': {
+            'text_models': {
+                'mistral-large': {'token_limit': 32000, 'max_output_tokens': 2048},
+                'mistral-medium': {'token_limit': 32000, 'max_output_tokens': 2048}
+            }
+        },
+        'amazon': {
+            'text_models': {
+                'titan-large': {'token_limit': 8192, 'max_output_tokens': 2048},
+                'claude-v2': {'token_limit': 100000, 'max_output_tokens': 4096}
+            }
+        }
+    }
+    
+    def __init__(self, config_dir: str = None):
+        """Initialize the config loader.
+        
+        Args:
+            config_dir: Optional path to config directory. If None, uses default configs.
+        """
+        self.config_dir = config_dir
+        if config_dir:
+            self.models_file = os.path.join(config_dir, 'models.yaml')
+            self._load_configs()
+        else:
+            self.models_config = {'providers': self.DEFAULT_CONFIGS}
+
+    def _load_configs(self):
+        """Load all configuration files."""
+        if os.path.exists(self.models_file):
+            self.models_config = self._load_yaml(self.models_file)
+        else:
+            self.models_config = {'providers': self.DEFAULT_CONFIGS}
+
+    def _load_yaml(self, file_path: str) -> Dict[str, Any]:
+        """Load a YAML file."""
+        with open(file_path, 'r') as f:
+            return yaml.safe_load(f)
+
+    def get_model_config(self, provider: str, model: str = None) -> Dict[str, Any]:
+        """Get configuration for a specific model.
+        
+        Args:
+            provider: Provider name (e.g., 'openai', 'anthropic')
+            model: Optional model name. If None, returns provider config.
+            
+        Returns:
+            Dictionary containing model configuration.
+        """
+        provider_config = self.models_config.get('providers', {}).get(provider, {})
+        if model:
+            for model_type in ['text_models', 'image_models', 'video_models', 'voice_models', 'avatar_models']:
+                if model_type in provider_config and model in provider_config[model_type]:
+                    return provider_config[model_type][model]
+        return provider_config
+
+    def get_models_by_feature(self, provider: str, feature: str) -> List[str]:
+        """Get available models for a provider and feature type.
+        
+        Args:
+            provider: Provider name
+            feature: Feature type ('text', 'image', 'video', 'avatar', 'voice')
+            
+        Returns:
+            List of model names
+        """
+        provider_config = self.models_config.get('providers', {}).get(provider, {})
+        feature_key = f"{feature}_models"
+        
+        if feature_key in provider_config:
+            return list(provider_config[feature_key].keys())
+        return []
+
+    def get_provider_config(self, provider: str) -> Dict[str, Any]:
+        """Get configuration for a provider.
+        
+        Args:
+            provider: Provider name
+            
+        Returns:
+            Dictionary containing provider configuration
+        """
+        return self.models_config.get('providers', {}).get(provider, {})
