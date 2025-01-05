@@ -7,7 +7,7 @@ name = "tokenlens"
 version = "0.1.6"
 description = "A library for accurate token counting and limit validation across various LLM providers"
 authors = [
-    {name = "Giri Ramanathan", email = "vgiri2015@gmail.com"}
+    {name = "Giri Ramanathan", email = "giri.varatharajan@gmail.com"}
 ]
 requires-python = ">=3.8"
 readme = "README.md"
