@@ -71,6 +71,44 @@ from tokenlens.tokenizers import MistralTokenizer
 tokenizer = MistralTokenizer()
 ```
 
+## Provider-Specific Dependencies
+
+TokenLens uses a modular dependency system. Each provider's dependencies are optional and must be installed separately:
+
+```bash
+# For Mistral support
+pip install tokenlens[mistral]
+
+# For OpenAI support
+pip install tokenlens[openai]
+
+# For Anthropic support
+pip install tokenlens[anthropic]
+
+# For all providers
+pip install tokenlens[all]
+```
+
+If you try to use a provider without installing its dependencies, TokenLens will:
+1. Attempt to use a fallback implementation if available
+2. Raise an informative error message if the provider's functionality is required
+
+Example with Mistral:
+```python
+from tokenlens import MistralTokenizer
+
+# This requires the mistralai package
+tokenizer = MistralTokenizer(api_key="your-api-key")
+
+# Count tokens (will use fallback if mistralai not installed)
+text = "Hello, world!"
+token_count = tokenizer.count_tokens(text)
+
+# Get model limits
+model_limits = tokenizer.get_model_limits("mistral-medium")
+print(f"Model limits: {model_limits}")
+```
+
 ## The Problem TokenLens Solves
 
 Traditional AI application development often faces these challenges:
